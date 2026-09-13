@@ -220,11 +220,13 @@ function Works() {
 
   useEffect(() => {
     if (active === null || !audioRef.current) return;
+    const track = tracks[active];
+    if (!track) return;
     const timer = window.setInterval(() => {
       const audio = audioRef.current;
       if (!audio) return;
       const elapsed = audio.context.currentTime - audio.startedAt;
-      const duration = tracks[active].duration;
+      const duration = track.duration;
       if (elapsed >= duration) {
         stopAudio();
         setActive(null);
@@ -237,6 +239,8 @@ function Works() {
   }, [active]);
 
   const toggleTrack = (index: number) => {
+    const track = tracks[index];
+    if (!track) return;
     if (active === index) {
       stopAudio();
       setActive(null);
@@ -250,7 +254,7 @@ function Works() {
     master.gain.setValueAtTime(0.0001, context.currentTime);
     master.gain.exponentialRampToValueAtTime(0.11, context.currentTime + 1.4);
     master.connect(context.destination);
-    const base = tracks[index].frequency;
+    const base = track.frequency;
     const oscillators = [1, 1.5, 2.01].map((ratio, layer) => {
       const oscillator = context.createOscillator();
       const gain = context.createGain();
